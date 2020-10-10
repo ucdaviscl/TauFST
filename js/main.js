@@ -122,6 +122,13 @@ go(CurrentState, [A|InString], OutString) :-
 go(CurrentState, InString, OutString) :-
   transition(CurrentState, eps, NextState, eps),
   go(NextState, InString, OutString).
+
+% FSA is an FST with the same input and output
+fsa(X) :- fst(X, X).
+
+% An FSA transition is a transition with the
+% same input and output symbol
+transition(State, Sym, NextState, Sym) :- transition(State, Sym, NextState).
   `;
 
 	var parsed = session.consult(fststr);
