@@ -6,6 +6,7 @@ var try_goals = [""];
 var try_stack = 0;
 var session = null;
 var code = null;
+var curr_code_text = "";
 var query = null;
 var reset = 0;
 var styles = {};
@@ -24,7 +25,6 @@ window.addEventListener("load", function() {
 	code.setSize("100%", "100%");
 	
 	document.getElementById("query").addEventListener('focus', (event) => {
-		console.log('blur');
 		reconsult();
 	}, true);  
 
@@ -57,7 +57,7 @@ function loadFile() {
 			code.setValue(content);
 		}
 		document.getElementById("fileName").value = e.target.files[0].name;
-	}	 
+	}
 }
 
 function saveFile() {
@@ -228,7 +228,10 @@ function add(text) {
 function reconsult() {
 	//document.getElementById("reconsult").value = "Reconsult program";
 	var raw_program = code.getValue();
-	console.log(raw_program);
+	if(raw_program == curr_code_text) {
+		return;
+	}
+	curr_code_text = raw_program;
 	if( session == null ) {
 		console.log("new session")
 		session = pl.create(parseInt(document.getElementById("limit").value));
