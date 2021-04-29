@@ -93,35 +93,37 @@ function consultFST() {
 % This is what we use to run the transducer
 fst(Input, Output) :-
   initial(State),
-  go(State, Input, Output).
+  go(State, Input, Output, 0).
 
 % This is how we know that we've reached the end of the run
-go(CurrentState, [], []) :-
+go(CurrentState, [], [], _) :-
   final(CurrentState).
 
 % Use a transition with no eps on either side
-go(CurrentState, [A|InString], [B|OutString]) :-
+go(CurrentState, [A|InString], [B|OutString], _) :-
   transition(CurrentState, A, NextState, B),
   A \\= eps,
   B \\= eps,
-  go(NextState, InString, OutString).
+  go(NextState, InString, OutString, 0).
 
 % use a transition with eps on the input side
-go(CurrentState, InString, [B|OutString]) :-
+go(CurrentState, InString, [B|OutString], _) :-
   transition(CurrentState, eps, NextState, B),
   B \\= eps,
-  go(NextState, InString, OutString).
+  go(NextState, InString, OutString, 0).
 
 % use a transition with eps on the output side
-go(CurrentState, [A|InString], OutString) :-
+go(CurrentState, [A|InString], OutString, _) :-
   transition(CurrentState, A, NextState, eps),
   A \\= eps,
-  go(NextState, InString, OutString).
+  go(NextState, InString, OutString, 0).
 
 % use a transition with eps on both sides
-go(CurrentState, InString, OutString) :-
+go(CurrentState, InString, OutString, N) :-
   transition(CurrentState, eps, NextState, eps),
-  go(NextState, InString, OutString).
+  N < 10,
+  M is N + 1,
+  go(NextState, InString, OutString, M).
 
 % FSA is an FST with the same input and output
 fsa(X) :- fst(X, X).
